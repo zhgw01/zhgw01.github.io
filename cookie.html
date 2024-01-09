@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Cookie Manager</title>
+    <style>
+      #cookiesContainer {
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Cookie Manager</h1>
+    <form id="addCookieForm">
+      <label for="cookieName">Cookie Name:</label><br />
+      <input type="text" id="cookieName" /><br />
+      <label for="cookieValue">Cookie Value:</label><br />
+      <input type="text" id="cookieValue" /><br />
+      <input type="submit" value="Add Cookie" />
+    </form>
+    <ul id="cookiesContainer"></ul>
+    <script>
+      function getAllCookies() {
+        var pairs = document.cookie.split(";");
+        var cookies = {};
+        for (var i = 0; i < pairs.length; i++) {
+          var pair = pairs[i].split("=");
+          cookies[(pair[0] + "").trim()] = unescape(pair[1]);
+        }
+        return cookies;
+      }
+
+      function setCookie(name, value, days) {
+        var expires = "";
+        if (days) {
+          var date = new Date();
+          date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+          expires = "; expires=" + date.toUTCString();
+        }
+        document.cookie = name + "=" + (value || "") + expires + "; path=/";
+      }
+
+      function displayCookies() {
+        var cookies = getAllCookies();
+        var container = document.getElementById("cookiesContainer");
+        container.innerHTML = "";
+        for (var name in cookies) {
+          var li = document.createElement("li");
+          li.textContent = name + ": " + cookies[name];
+          container.appendChild(li);
+        }
+      }
+
+      document
+        .getElementById("addCookieForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          var name = document.getElementById("cookieName").value;
+          var value = document.getElementById("cookieValue").value;
+          setCookie(name, value, 7); // set the cookie to expire in 7 days
+          displayCookies(); // refresh the list of cookies
+        });
+
+      // Display initial list of cookies
+      displayCookies();
+    </script>
+  </body>
+</html>
